@@ -1162,6 +1162,24 @@
                   "label": "None - Disable Sub Levels"
                 }
               ]
+            },
+            {
+              "id": "aiUpscaleTrek",
+              "name": "Star Trek DS9 & Voyager: AI Upscale Boost",
+              "description": "Applies only to **Star Trek: Deep Space Nine** and **Star Trek: Voyager**. Upscaled releases are normally scored -10000 and discarded. **Boost** keeps them (bypasses Excluded Stream Expressions), cancels the penalty, and sorts them first via Stream Expressions (requires **1080P Remux Boost** set to Default). Choose **None** for upstream behavior.",
+              "type": "select",
+              "required": false,
+              "default": "boost",
+              "options": [
+                {
+                  "value": "boost",
+                  "label": "Boost - Prioritize AI Upscales"
+                },
+                {
+                  "value": "none",
+                  "label": "None - Upstream Behavior"
+                }
+              ]
             }
           ]
         },
@@ -1297,6 +1315,24 @@
                 {
                   "value": "none",
                   "label": "None - Disable Sub Levels"
+                }
+              ]
+            },
+            {
+              "id": "aiUpscaleTrek",
+              "name": "Star Trek DS9 & Voyager: AI Upscale Boost",
+              "description": "Applies only to **Star Trek: Deep Space Nine** and **Star Trek: Voyager**. Upscaled releases are normally scored -10000 and discarded. **Boost** keeps them (bypasses Excluded Stream Expressions), cancels the penalty, and sorts them first via Stream Expressions (requires **1080P Remux Boost** set to Default). Choose **None** for upstream behavior.",
+              "type": "select",
+              "required": false,
+              "default": "boost",
+              "options": [
+                {
+                  "value": "boost",
+                  "label": "Boost - Prioritize AI Upscales"
+                },
+                {
+                  "value": "none",
+                  "label": "None - Upstream Behavior"
                 }
               ]
             }
@@ -3720,6 +3756,11 @@
           "enabled": true
         },
         {
+          "__if": "inputs.sorting.aiUpscaleTrek == boost or inputs.sortingP2P.aiUpscaleTrek == boost",
+          "expression": "/*Trek AI Upscale*/ queryType == 'series' and title in ['Star Trek: Deep Space Nine', 'Star Trek: Voyager'] ? regexMatched(negate(type(uncached(streams),'debrid'), streams), 'Upscaled') : []",
+          "enabled": true
+        },
+        {
           "expression": "<SYNCED: https://git.tamtaro.de/PSE.json>",
           "enabled": true
         }
@@ -3742,6 +3783,11 @@
         },
         {
           "expression": "<SYNCED: https://git.tamtaro.de/ISE.json>",
+          "enabled": true
+        },
+        {
+          "__if": "inputs.sorting.aiUpscaleTrek == boost or inputs.sortingP2P.aiUpscaleTrek == boost",
+          "expression": "/*Trek AI Upscale*/ queryType == 'series' and title in ['Star Trek: Deep Space Nine', 'Star Trek: Voyager'] ? passthrough(regexMatched(streams, 'Upscaled'), 'excluded') : []",
           "enabled": true
         }
       ],
@@ -3823,6 +3869,12 @@
             "__if": "inputs.sorting.subLevels == default or inputs.sortingP2P.subLevels == default",
             "expression": "<SYNCED: https://git.tamtaro.de/for-nour-RSE.json>",
             "score": 0,
+            "enabled": true
+          },
+          {
+            "__if": "inputs.sorting.aiUpscaleTrek == boost or inputs.sortingP2P.aiUpscaleTrek == boost",
+            "expression": "/*Trek AI Upscale*/ queryType == 'series' and title in ['Star Trek: Deep Space Nine', 'Star Trek: Voyager'] ? regexMatched(streams, 'Upscaled') : []",
+            "score": 10000,
             "enabled": true
           }
         ]
